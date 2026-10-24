@@ -3,12 +3,12 @@
 importer="glsl"
 type="RDShaderFile"
 uid="uid://24usaxk4k6t3"
-path="res://.godot/imported/clouds.glsl-6a532d7125214c9a2b36dc41c27e37fd.res"
+path="res://.godot/imported/clouds.glsl-363a5d924f0805ef8e91e7d4cdab5634.res"
 
 [deps]
 
-source_file="res://cloud_sky/clouds.glsl"
-dest_files=["res://.godot/imported/clouds.glsl-6a532d7125214c9a2b36dc41c27e37fd.res"]
+source_file="res://scenes/cloud_sky/clouds.glsl"
+dest_files=["res://.godot/imported/clouds.glsl-363a5d924f0805ef8e91e7d4cdab5634.res"]
 
 [params]
 

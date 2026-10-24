@@ -1,39 +1,47 @@
 @tool
+class_name TransmittanceLut
 extends Texture2DRD
 
 # This generates an LUT when it is loaded that is used throughout the sky system
+var texture_size: Vector2i = Vector2i(256, 64)
+var rd: RenderingDevice
+var shader: RID
+var pipeline: RID
+var texture_rd: RID
+var texture_set: RID
+var script_path: String = get_script().resource_path
+var _push_back: bool
 
-var texture_size := Vector2i(256, 64)
 
-var rd : RenderingDevice
-
-var shader : RID
-var pipeline : RID
-var texture_rd : RID
-var texture_set : RID
-
-func _init():
+func _init() -> void:
 	rd = RenderingServer.get_rendering_device()
 	RenderingServer.call_on_render_thread(_initialize_texture)
 	RenderingServer.call_on_render_thread.call_deferred(_initialize_compute_code)
 
-func _notification(what):
-	if what == NOTIFICATION_PREDELETE:
-		if texture_rd:
-			rd.free_rid(texture_rd)
-		if shader:
-			rd.free_rid(shader)
 
-func _create_uniform_set(p_texture_rd : RID) -> RID:
-	var uniform := RDUniform.new()
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		if rd and is_instance_valid(self):
+			RenderingServer.call_on_render_thread(Callable(_free_rids_on_render_thread))
+
+
+func _free_rids_on_render_thread() -> void:
+	if texture_rd and texture_rd.is_valid():
+		rd.free_rid(texture_rd)
+	if shader and shader.is_valid():
+		rd.free_rid(shader)
+
+
+func _create_uniform_set(p_texture_rd: RID) -> RID:
+	var uniform: RDUniform = RDUniform.new()
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE
 	uniform.binding = 0
 	uniform.add_id(p_texture_rd)
 	return rd.uniform_set_create([uniform], shader, 0)
-	
 
-func _initialize_texture():
-	var tf : RDTextureFormat = RDTextureFormat.new()
+
+func _initialize_texture() -> void:
+	var tf: RDTextureFormat = RDTextureFormat.new()
 	tf.format = RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT
 	tf.texture_type = RenderingDevice.TEXTURE_TYPE_2D
 	tf.width = texture_size.x
@@ -41,16 +49,22 @@ func _initialize_texture():
 	tf.depth = 1
 	tf.array_layers = 1
 	tf.mipmaps = 1
-	tf.usage_bits = RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT + RenderingDevice.TEXTURE_USAGE_COLOR_ATTACHMENT_BIT + RenderingDevice.TEXTURE_USAGE_STORAGE_BIT + RenderingDevice.TEXTURE_USAGE_CAN_UPDATE_BIT + RenderingDevice.TEXTURE_USAGE_CAN_COPY_TO_BIT
+	tf.usage_bits = RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT + \
+			RenderingDevice.TEXTURE_USAGE_COLOR_ATTACHMENT_BIT + \
+			RenderingDevice.TEXTURE_USAGE_STORAGE_BIT + \
+			RenderingDevice.TEXTURE_USAGE_CAN_UPDATE_BIT + \
+			RenderingDevice.TEXTURE_USAGE_CAN_COPY_TO_BIT
 	if Engine.is_editor_hint():
 		tf.usage_bits += RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT
 
 	# Create our texture
 	texture_rd = rd.texture_create(tf, RDTextureView.new(), [])
 
-func _initialize_compute_code():
+
+func _initialize_compute_code() -> void:
 	# Create our shader
-	var shader_file = load(get_script().resource_path.get_base_dir() + "/transmittance-lut.glsl")
+	var shader_file: RDShaderFile = \
+			load(script_path.get_base_dir() + "/transmittance-lut.glsl")
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
 	shader = rd.shader_create_from_spirv(shader_spirv)
 	if not shader.is_valid():
@@ -63,16 +77,20 @@ func _initialize_compute_code():
 
 	texture_rd_rid = texture_rd
 
-	var push_constant : PackedFloat32Array = PackedFloat32Array()
-	push_constant.push_back(texture_size.x)
-	push_constant.push_back(texture_size.y)
-	push_constant.push_back(0.0)
-	push_constant.push_back(0.0)
+	var push_constant: PackedFloat32Array = PackedFloat32Array()
+	_push_back = push_constant.push_back(texture_size.x)
+	_push_back = push_constant.push_back(texture_size.y)
+	_push_back = push_constant.push_back(0.0)
+	_push_back = push_constant.push_back(0.0)
 
 	# Run our compute shader.
-	var compute_list := rd.compute_list_begin()
+	var compute_list: int = rd.compute_list_begin()
 	rd.compute_list_bind_compute_pipeline(compute_list, pipeline)
-	rd.compute_list_set_push_constant(compute_list, push_constant.to_byte_array(), push_constant.size() * 4)
+	rd.compute_list_set_push_constant(
+		compute_list,
+		push_constant.to_byte_array(),
+		push_constant.size() * 4,
+	)
 	rd.compute_list_bind_uniform_set(compute_list, texture_set, 0)
 	rd.compute_list_dispatch(compute_list, 32, 8, 1)
 	rd.compute_list_end()

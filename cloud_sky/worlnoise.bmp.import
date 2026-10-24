@@ -3,22 +3,24 @@
 importer="3d_texture"
 type="CompressedTexture3D"
 uid="uid://c4dp6g6gouj2b"
-path.bptc="res://.godot/imported/worlnoise.bmp-0c7caf88ae37fd7638815b91a1d6ba92.bptc.ctex3d"
+path="res://.godot/imported/worlnoise.bmp-42a0b4feb0cdc33e1d701d1517592c2f.ctex3d"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://cloud_sky/worlnoise.bmp"
-dest_files=["res://.godot/imported/worlnoise.bmp-0c7caf88ae37fd7638815b91a1d6ba92.bptc.ctex3d"]
+source_file="res://scenes/cloud_sky/worlnoise.bmp"
+dest_files=["res://.godot/imported/worlnoise.bmp-42a0b4feb0cdc33e1d701d1517592c2f.ctex3d"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=true
+compress/high_quality_mode=0
 compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/channel_pack=0
 mipmaps/generate=true

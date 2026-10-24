@@ -3,22 +3,24 @@
 importer="3d_texture"
 type="CompressedTexture3D"
 uid="uid://dbfbysid168mx"
-path.bptc="res://.godot/imported/perlworlnoise.tga-d1966ce68b0d9c47ab31b221d974b03c.bptc.ctex3d"
+path="res://.godot/imported/perlworlnoise.tga-4fb27b5cfeb8d45652747cf5a844c55d.ctex3d"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://cloud_sky/perlworlnoise.tga"
-dest_files=["res://.godot/imported/perlworlnoise.tga-d1966ce68b0d9c47ab31b221d974b03c.bptc.ctex3d"]
+source_file="res://scenes/cloud_sky/perlworlnoise.tga"
+dest_files=["res://.godot/imported/perlworlnoise.tga-4fb27b5cfeb8d45652747cf5a844c55d.ctex3d"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=true
+compress/high_quality_mode=0
 compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/channel_pack=0
 mipmaps/generate=true
